@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CBU Nöbet Takvimi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./style.css">
+    <link href="./assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./assets/plugins/fullcalendar/main.css">
+
+</head>
+
+<body>
+    <div class="container-fluid" style="background-color:rgb(148, 224, 224);">
+        <div class="row" style="margin-left: 0px;margin-right:0px;">
+
+            <div class="col-md-2">
+                <div id="addUserDiv" class="header">
+                    <input type="text" id="addUserInput" style="border-color: rgb(148, 224, 224);" placeholder="">
+                    <span onclick="newElement()" class="addBtn btn-primary"><i class="fa fa-user-plus" style="font-size: 1.4em;"></i></span>
+                </div>
+                <ul id="myUL">
+                </ul>
+                <div id="external-events-list" class=" flex-wrap">
+                </div>
+            </div>
+            <div class="col-md-10 " id="first-calendar">
+                <!-- <h1 class="text-center">NÖBET TAKVİMİ </h1> -->
+                <div id='calendar'></div>
+                <div id='secondCalendar'></div>
+            </div>
+            <div class="col-md-12">
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <script src='assets/js/jquery-3.6.0.min.js'></script>
+    <script src='assets/js/plugins/bootstrap/js/bootstrap.min.js'></script>
+    <script src="./script.js "></script>
+    <script src="./assets/plugins/select2/js/select2.full.min.js "></script>
+    <script src="./assets/plugins/notify/notify.min.js"></script>
+    <script src='./assets/plugins/fullcalendar/main.js'></script>
+    <script src="./assets/plugins/moment/moment-min.js"></script>
+    <script src="./assets/plugins/sweetalert/sweetalert-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    </script>
+</body>
+
+</html>
