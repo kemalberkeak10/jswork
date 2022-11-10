@@ -13,6 +13,7 @@ var userList = [];
 var calendarStartDate = "";
 var calendarEndDate = "";
 var customDuration = 5;
+
 document.addEventListener('DOMContentLoaded', function() {
 
     var firstDayOfWeek = getMonday(new Date());
@@ -262,6 +263,8 @@ function createSecondCalendar() {
         }
     });
     secondCalendar.render();
+    shiftDayCount();
+
 };
 //add user in first page
 function newElement() {
@@ -321,6 +324,85 @@ function createUserDragElements() {
         <div class="fc-event-main card-body" id="card-body-` + v.id + `"><i class="fa fa-user-md" style=font-size:2em;>   ` + v.name + `</i></div></div>`
         $('#external-events-list').append(newDragItem);
     });
+}
+
+function shiftDayCount() {
+    var resmiTatiller = $('#secondCalendar tbody tbody tr').find('.fc-event-start');
+    var resmiTatilCount = $('#secondCalendar tbody tbody tr').find('.fc-event-start').length;
+
+    mondaysData = [];
+    tuesdaysData = [];
+    wednesdaysData = [];
+    thursdaysData = [];
+    fridaysData = [];
+    saturdaysData = [];
+    sundaysData = [];
+
+    var futureTds = $('#secondCalendar tbody tbody tr').find('.fc-day-future');
+    if (futureTds.length > 0) {
+        var monDayCount = futureTds.filter(".fc-day-mon").lenght;
+        var tuesDayCount = futureTds.filter('.fc-day-tue').length;
+        var wednesDayCount = futureTds.filter('.fc-day-wed').length;
+        var thursDayCount = futureTds.filter('.fc-day-thu').length;
+        var friDayCount = futureTds.filter('.fc-day-fri').length;
+        var saturDayCount = futureTds.filter('.fc-day-sat').length;
+        var sunDayCount = futureTds.filter('.fc-day-sun').length;
+
+        var monDayTd = futureTds.filter(".fc-day-mon");
+        if (monDayTd.length > 0) {
+            $.each(monDayTd, function(i, v) {
+                mondaysData.push({ date: $(this).data('date'), weekend: false, day: "monday" });
+                console.log(mondaysData);
+            });
+        }
+        var tuesDayTdt = futureTds.filter('.fc-day-tue');
+        if (tuesDayTdt.length > 0) {
+            $.each(tuesDayTdt, function(i, v) {
+                tuesdaysData.push({ date: $(this).data('date'), weekend: false, day: "tuesday" });
+                console.log(tuesdaysData);
+            });
+        }
+        var wednesDayTd = futureTds.filter('.fc-day-wed');
+        if (wednesDayTd.length > 0) {
+            $.each(wednesDayTd, function(i, v) {
+                wednesdaysData.push({ date: $(this).data('date'), weekend: false, day: "wednesday" });
+                console.log(wednesdaysData);
+            });
+        }
+        var thursDayTd = futureTds.filter('.fc-day-thu');
+        if (thursDayTd.length > 0) {
+            $.each(thursDayTd, function(i, v) {
+                thursdaysData.push({ date: $(this).data('date'), weekend: false, day: "thursday" });
+                console.log(thursdaysData);
+            });
+        }
+        var friDayTd = futureTds.filter('.fc-day-fri');
+        if (friDayTd.length > 0) {
+            $.each(friDayTd, function(i, v) {
+                fridaysData.push({ date: $(this).data('date'), weekend: false, day: "friday" });
+                console.log(fridaysData);
+            });
+        }
+        var saturDayTd = futureTds.filter('.fc-day-sat');
+        if (saturDayTd.length > 0) {
+            $.each(saturDayTd, function(i, v) {
+                saturdaysData.push({ date: $(this).data('date'), weekend: true, day: "saturday" });
+                console.log(saturdaysData);
+            });
+        }
+        var sunDayTd = futureTds.filter('.fc-day-sun');
+        if (monsunDayTdDayTd.length > 0) {
+            $.each(sunDayTd, function(i, v) {
+                sundaysData.push({ date: $(this).data('date'), weekend: true, day: "sunday" });
+                console.log(sundaysData);
+            });
+        }
+        // console.log("Resmi tatil gün sayısı : " + resmiTatilCount);
+        // console.log(monDayCount, tuesDayCount, wednesDayCount, thursDayCount, friDayCount, saturDayCount, sunDayCount);
+    }
+    // var today = $('#secondCalendar tbody tbody tr').find('.fc-day-today');
+
+    $('#secondCalendar tbody tbody tr').find('.fc-day-past');
 }
 
 var myNodelist = document.getElementsByTagName("LI");
