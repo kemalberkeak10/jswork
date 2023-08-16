@@ -36,8 +36,7 @@ $(function() {
                 HarcananZaman: $('#harcananZaman').val(),
 
             }
-            // var url = 'https://meyicki.setcrm.com/api/data/SatisOnayGuncelle';
-            //var url2 = 'http://localhost:50058/api/data/SatisOnayGuncelle';
+        var url = 'https://meyicki.setcrm.com/api/data/SatisOnayGuncelle';
         $('#modalSablon .modal-body').html('<div id="txt" style="margin:0 0 5px; width: 100%;">İşleminiz Yapılıyor, lütfen bekleyiniz..<br/> <img src="/Public/img/loading_bar.gif"></div>');
         $.post(url, data, function(r) {
             if (r.Status) {

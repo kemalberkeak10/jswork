@@ -1,12 +1,4 @@
 $(function() {
-    var toCreateVal = $('label[for=BF72508C4CF140B3A05CE6B48DC6ABC3]').parent().data('value')
-    if (String.isNullOrWhiteSpace(toCreateVal)) {
-
-    }
-});
-
-
-$(function() {
     $('.well .pull-right:eq(0)').prepend('<a id="sertifikaIndir" class="btn btn-sm btn-warning"  style="margin-right:10px;" >Sertifika İndir</a>');
     var calibratedTechnicianId = $('label[for=229E6919177C49229ADC807F42F67E94]').parent().data('publicids');
     var theScopeResponsibleId = $('label[for=ADF4F8BC81294E2AB8E20C2EC1AF1175]').parent().data('publicids');
