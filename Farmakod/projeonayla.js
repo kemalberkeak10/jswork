@@ -28,17 +28,20 @@ $(function () {
           "</tbody>" +
           "</table>" +
           String.format(
-            '<div style="width:100%"><div class="projeOnayiModal-lr-records" style="width: 100%;overflow-y: auto;height: 300px;"><h4 class="mt-2" style="margin-top:5px;">Teknik Şartname Madde Listesi</h4></div><div class="proje-onay-selected-records" style="width: 100%;"><h4 class="mt-2">Onaya Gönderilecek Teknik Şartname Madde Listesi</h4></div><hr><div id="divProjeOnayiPlanlananlar" class="divProjeOnayiPlanlananlar" ></div></div>'
+            '<div style="width:100%"><div class="projeOnayiModal-lr-records" style="width: 100%;overflow-y: auto;height: 350px;"><h4 class="mt-2" style="margin-top:5px;">Teknik Şartname Madde Listesi</h4></div><div class="proje-onay-selected-records" style="width: 100%;"><h4 class="mt-2">Onaya Gönderilecek Teknik Şartname Madde Listesi</h4></div><hr><div id="divProjeOnayiPlanlananlar" class="divProjeOnayiPlanlananlar" ></div></div>'
           ),
         footer:
           '<button id="btnAcceptProjeOnayi" type="button" class="btn btn-sm btn-success " >Seçilenlere Onay Ver</button>' +
-          '<button id="btnRejectProjeOnayi" type="button" class="btn btn-sm btn-danger " >Seçilenlere Red Ver</button>' +
+          '<button id="btnRejectProjeOnayi" type="button" class="btn btn-sm btn-danger " >Seçilenler Ret Edilsin</button>' +
           '<button id="btnCancel" class="btn btn-primary btn-sm" data-dismiss="modal" onclick="window.location.reload()">İptal</button>',
       },
+      settings: {
+        widthClass: "modal-full-width",
+      },
     });
-    $("#modalProjeOnayi .modal-dialog").css({
-      width: "80%",
-    });
+    // $("#modalProjeOnayi .modal-dialog").css({
+    //   width: "80%",
+    // });
 
     var modalBody = $("#modalProjeOnayi .modal-body"),
       bodyRecords = modalBody.find(".projeOnayiModal-lr-records");
@@ -50,7 +53,7 @@ $(function () {
       })
         .append(
           $("<thead style='background-color:#b1d3cc;' />").html(
-            '<tr><th style="text-align: center; vertical-align:middle;width:10%">Sıra Numarası</th><th style="text-align: center; vertical-align:middle;width:80%">Madde Açıklaması</th><th style="width:10%;text-align:center;"><button class="btn btn-sm btn-success select-all-rows-projeOnay"><i class="fa fa-check"></i></button></th></tr>'
+            '<tr><th style="text-align: center; vertical-align:middle;width:8%">Sıra Numarası</th><th style="text-align: center; vertical-align:middle;width:30%">Madde Açıklaması</th><th style="text-align: center; vertical-align:middle;width:10%">Proje Adımı</th><th style="text-align: center; vertical-align:middle;width:12%">Hedeflenen Başlama Tarihi</th><th style="text-align: center; vertical-align:middle;width:12%">Hedeflenen Bitiş Tarihi</th><th style="width:20%;"></th><th style="width:8%;text-align:center;"><button class="btn btn-sm btn-success select-all-rows-projeOnay"><i class="fa fa-check"></i></button></th></tr>'
           )
         )
         .append($("<tbody/>"))
@@ -63,7 +66,7 @@ $(function () {
       })
         .append(
           $("<thead style='background-color:#58cbb4;' />").html(
-            '<tr><th style="text-align: center; vertical-align:middle;width:10%">Sıra Numarası</th><th style="width:80%;text-align: center; vertical-align:middle;">Madde Açıklaması</th><th style="width:10%;text-align:center;"><button class="btn btn-sm btn-danger discard-all-rows-projeOnay"><i class="fas fa-undo"></i></button></th>'
+            '<tr><th style="text-align: center; vertical-align:middle;width:8%">Sıra Numarası</th><th style="text-align: center; vertical-align:middle;width:30%">Madde Açıklaması</th><th style="text-align: center; vertical-align:middle;width:10%">Proje Adımı</th><th style="text-align: center; vertical-align:middle;width:12%">Hedeflenen Başlama Tarihi</th><th style="text-align: center; vertical-align:middle;width:12%">Hedeflenen Bitiş Tarihi</th><th style="text-align: center; vertical-align:middle;width:20%;">Açıklama <th style="width:8%;text-align:center;"><button class="btn btn-sm btn-danger discard-all-rows-projeOnay"><i class="fas fa-undo"></i></button></th>'
           )
         )
         .append($("<tbody/>"))
@@ -99,6 +102,7 @@ $(function () {
     var tbody = selectedRecords.find("tbody");
     $(this).closest("tr").find(".add-row-projeOnayi").hide();
     $(this).closest("tr").find(".delete-row-projeOnayi").show();
+    $(this).closest("tr").find(".comment-input").show();
     tbody.append(addedRow);
   });
   $("body").on("click", ".delete-row-projeOnayi", function () {
@@ -109,6 +113,9 @@ $(function () {
     var tbody = records.find("tbody");
     $(this).closest("tr").find(".add-row-projeOnayi").show();
     $(this).closest("tr").find(".delete-row-projeOnayi").hide();
+    var comment = $(this).closest("tr").find(".comment-input");
+    comment.hide();
+    comment.val("");
     tbody.append(deletedRow);
   });
 
@@ -165,12 +172,27 @@ $(function () {
               "FieldPublicId",
               "097F370B073543BCBCD175A62D2320B1"
             ).Value;
+            var bagliOlduguProjeAdimi = v.Values.first(
+              "FieldPublicId",
+              "F0530E7B06C74870B03E17A8BA022C85"
+            ).Value;
+            var hedeflenenBaslangicTarihi = v.Values.first(
+              "FieldPublicId",
+              "1E40BA6A879743B6984CDFD7D9190118"
+            ).Value.split(" ")[0];
+            var hedeflenenBitisTarihi = v.Values.first(
+              "FieldPublicId",
+              "5508ECE42E6047FF8308F297561B4D6F"
+            ).Value.split(" ")[0];
             tbody.append(
               String.format(
-                "<tr style='background-color:white' data-id='{0}'  data-aciklama='{2}'><td style='text-align:center'><div class='siraNo' >{1}</div></td><td><div class='tsMaddesi' >{2}</div></td><td style='text-align:center;'><button class='btn btn-sm btn-primary row-detail-projeOnay' style='height:40px;' ><i class='fas fa-external-link-alt'></i></button><button class='btn btn-sm btn-success add-row-projeOnayi' style='height:40px;' ><i class='fa fa-plus'></i></button><button class='btn btn-sm btn-danger delete-row-projeOnayi' style='height:40px;display:none;' ><i class='fa fa-minus'></i></button></td></tr>",
+                "<tr style='background-color:white' data-id='{0}'  data-aciklama='{2}'><td style='text-align:center'><div class='siraNo' >{1}</div></td><td><div class='tsMaddesi' >{2}</div></td><td style='text-align:center;vertical-align:middle;''><div class='bagli-oldugu-proje-adimi' >{3}</div></td><td style='text-align:center;vertical-align:middle;'><div class='hedeflenen-baslangic' >{4}</div></td><td style='text-align:center;vertical-align:middle;''><div class='hedeflenen-bitis' >{5}</div></td><td class='comment'><div><input class='comment-input' type='text' style='width:100%; border-radius: 3px; border: 1px solid #a1f6ff; padding: 8px 12px;display:none;'></div><td style='text-align:center;'><button class='btn btn-sm btn-primary row-detail-projeOnay' style='height:40px;' ><i class='fas fa-external-link-alt'></i></button><button class='btn btn-sm btn-success add-row-projeOnayi' style='height:40px;' ><i class='fa fa-plus'></i></button><button class='btn btn-sm btn-danger delete-row-projeOnayi' style='height:40px;display:none;' ><i class='fa fa-minus'></i></button></td></tr>",
                 v.PublicId,
                 siraNo,
-                maddeAciklamasi
+                maddeAciklamasi,
+                bagliOlduguProjeAdimi,
+                hedeflenenBaslangicTarihi,
+                hedeflenenBitisTarihi
               )
             );
           });
@@ -262,9 +284,11 @@ $(function () {
       trList.each(function (i, v) {
         var id = $(v).data("id");
         var aciklama = $(v).data("aciklama");
+        var comment = $(v).find(".comment-input").val();
         var model = {
           MaddeAciklamasi: aciklama,
           RecordId: id,
+          Comment: comment,
         };
 
         projectRecords.push(model);
@@ -272,6 +296,9 @@ $(function () {
       var model = {
         ProjectRecords: projectRecords,
         CurrentUserId: userData.id,
+        GMY: $("label[for=DA1EBA5CB92F400DB355CCDABAD1A1A9]")
+          .closest("div")
+          .data("value"),
         ProjectRecordId: $("#RecordPublicId").val(),
         IsAccept: true,
       };
@@ -320,9 +347,11 @@ $(function () {
       trList.each(function (i, v) {
         var id = $(v).data("id");
         var aciklama = $(v).data("aciklama");
+        var comment = $(v).find(".comment-input").val();
         var model = {
           MaddeAciklamasi: aciklama,
           RecordId: id,
+          Comment: comment,
         };
 
         projectRecords.push(model);
@@ -330,6 +359,9 @@ $(function () {
       var model = {
         ProjectRecords: projectRecords,
         CurrentUserId: userData.id,
+        GMY: $("label[for=DA1EBA5CB92F400DB355CCDABAD1A1A9]")
+          .closest("div")
+          .data("value"),
         ProjectRecordId: $("#RecordPublicId").val(),
         IsAccept: false,
       };

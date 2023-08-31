@@ -28,16 +28,19 @@ $(function () {
           "</tbody>" +
           "</table>" +
           String.format(
-            '<div style="width:100%"><div class="onayaGonderModal-lr-records" style="width: 100%;overflow-y: auto;height: 300px;"><h4 class="mt-2" style="margin-top:5px;">Teknik Şartname Madde Listesi</h4></div><div class="selected-records" style="width: 100%;"><h4 class="mt-2">Onaya Gönderilecek Teknik Şartname Madde Listesi</h4></div><hr><div id="divPlanlananlar" class="divPlanlananlar" ></div></div>'
+            '<div style="width:100%"><div class="onayaGonderModal-lr-records" style="width: 100%;overflow-y: auto;height: 350px;"><h4 class="mt-2" style="margin-top:5px;">Teknik Şartname Madde Listesi</h4></div><div class="selected-records" style="width: 100%;"><h4 class="mt-2">Onaya Gönderilecek Teknik Şartname Madde Listesi</h4></div><hr><div id="divPlanlananlar" class="divPlanlananlar" ></div></div>'
           ),
         footer:
           '<button id="btnOnayaGonderModal" type="button" class="btn btn-sm btn-success " >Onaya Gönder</button>' +
           '<button id="btnCancel" class="btn btn-danger btn-sm" data-dismiss="modal" onclick="window.location.reload()">İptal</button>',
       },
+      settings: {
+        widthClass: "modal-full-width",
+      },
     });
-    $("#modalOnayaGonder .modal-dialog").css({
-      width: "80%",
-    });
+    // $("#modalOnayaGonder .modal-dialog").css({
+    //   width: "80%",
+    // });
 
     var modalBody = $("#modalOnayaGonder .modal-body"),
       bodyRecords = modalBody.find(".onayaGonderModal-lr-records");
@@ -49,7 +52,7 @@ $(function () {
       })
         .append(
           $("<thead style='background-color:#b1d3cc;' />").html(
-            '<tr><th style="text-align: center; vertical-align:middle;width:10%">Sıra Numarası</th><th style="text-align: center; vertical-align:middle;width:80%">Madde Açıklaması</th><th style="width:10%;text-align:center;"><button class="btn btn-sm btn-success select-all-rows-onayaGonder"><i class="fa fa-check"></i></button></th></tr>'
+            '<tr><th style="text-align: center; vertical-align:middle;width:8%">Sıra Numarası</th><th style="text-align: center; vertical-align:middle;width:40%">Madde Açıklaması</th><th style="text-align: center; vertical-align:middle;width:12%">Proje Adımı</th><th style="text-align: center; vertical-align:middle;width:15%">Hedeflenen Başlama Tarihi</th><th style="text-align: center; vertical-align:middle;width:15%">Hedeflenen Bitiş Tarihi</th><th style="width:8%;text-align:center;"><button class="btn btn-sm btn-success select-all-rows-onayaGonder"><i class="fa fa-check"></i></button></th></tr>'
           )
         )
         .append($("<tbody/>"))
@@ -62,7 +65,7 @@ $(function () {
       })
         .append(
           $("<thead style='background-color:#58cbb4;' />").html(
-            '<tr><th style="text-align: center; vertical-align:middle;width:10%">Sıra Numarası</th><th style="width:80%;text-align: center; vertical-align:middle;">Madde Açıklaması</th><th style="width:10%;text-align:center;"><button class="btn btn-sm btn-danger discard-all-rows-onayaGonder"><i class="fas fa-undo"></i></button></th>'
+            '<tr><th style="text-align: center; vertical-align:middle;width:8%">Sıra Numarası</th><th style="text-align: center; vertical-align:middle;width:40%">Madde Açıklaması</th><th style="text-align: center; vertical-align:middle;width:20%">Proje Adımı</th><th style="text-align: center; vertical-align:middle;width:12%">Hedeflenen Başlama Tarihi</th><th style="text-align: center; vertical-align:middle;width:12%">Hedeflenen Bitiş Tarihi</th><th style="width:8%;text-align:center;"><button class="btn btn-sm btn-danger discard-all-rows-onayaGonder"><i class="fas fa-undo"></i></button></th>'
           )
         )
         .append($("<tbody/>"))
@@ -165,12 +168,27 @@ $(function () {
               "FieldPublicId",
               "097F370B073543BCBCD175A62D2320B1"
             ).Value;
+            var bagliOlduguProjeAdimi = v.Values.first(
+              "FieldPublicId",
+              "F0530E7B06C74870B03E17A8BA022C85"
+            ).Value;
+            var hedeflenenBaslangicTarihi = v.Values.first(
+              "FieldPublicId",
+              "1E40BA6A879743B6984CDFD7D9190118"
+            ).Value.split(" ")[0];
+            var hedeflenenBitisTarihi = v.Values.first(
+              "FieldPublicId",
+              "5508ECE42E6047FF8308F297561B4D6F"
+            ).Value.split(" ")[0];
             tbody.append(
               String.format(
-                "<tr style='background-color:white' data-id='{0}'  data-aciklama='{2}'><td style='text-align:center'><div class='siraNo' >{1}</div></td><td><div class='tsMaddesi' >{2}</div></td><td style='text-align:center;'><button class='btn btn-sm btn-primary row-detail-onayaGonder' style='height:40px;' ><i class='fas fa-external-link-alt'></i></button><button class='btn btn-sm btn-success add-row-onayaGonder' style='height:40px;' ><i class='fa fa-plus'></i></button><button class='btn btn-sm btn-danger delete-row-onayaGonder' style='height:40px;display:none;' ><i class='fa fa-minus'></i></button></td></tr>",
+                "<tr style='background-color:white' data-id='{0}'  data-aciklama='{2}'><td style='text-align:center'><div class='siraNo' >{1}</div></td><td><div class='tsMaddesi' >{2}</div></td><td style='text-align:center'><div class='bagli-oldugu-proje-adimi' >{3}</div></td><td style='text-align:center'><div class='hedeflenen-baslangic' >{4}</div></td><td style='text-align:center'><div class='hedeflenen-bitis' >{5}</div></td><td style='text-align:center;'><button class='btn btn-sm btn-primary row-detail-onayaGonder' style='height:40px;' ><i class='fas fa-external-link-alt'></i></button><button class='btn btn-sm btn-success add-row-onayaGonder' style='height:40px;' ><i class='fa fa-plus'></i></button><button class='btn btn-sm btn-danger delete-row-onayaGonder' style='height:40px;display:none;' ><i class='fa fa-minus'></i></button></td></tr>",
                 v.PublicId,
                 siraNo,
-                maddeAciklamasi
+                maddeAciklamasi,
+                bagliOlduguProjeAdimi,
+                hedeflenenBaslangicTarihi,
+                hedeflenenBitisTarihi
               )
             );
           });
@@ -272,6 +290,9 @@ $(function () {
       var model = {
         ProjectRecords: projectRecords,
         CurrentUserId: userData.id,
+        GMY: $("label[for=DA1EBA5CB92F400DB355CCDABAD1A1A9]")
+          .closest("div")
+          .data("value"),
         ProjectRecordId: $("#RecordPublicId").val(),
       };
       var localUrl = String.format(
@@ -282,16 +303,17 @@ $(function () {
       );
       $.post(realUrl, model, function (r) {
         if (r.Status) {
-          //   $(
-          //     ".btn-br-actions[data-publicid=6DECC92E5AF84098BA322FC50BB5B10C]"
-          //   ).trigger("click");
-          notify(
-            "success",
-            "İşlem başarıyla gerçekleşti. Sayfa yenileniyor lütfen bekleyiniz..."
-          );
-          setTimeout(function () {
-            window.location.reload();
-          }, 1000);
+          $("#modalOnayaGonder").modal("hide");
+          $(
+            ".btn-br-actions[data-publicid=6DECC92E5AF84098BA322FC50BB5B10C]"
+          ).trigger("click");
+          // notify(
+          //   "success",
+          //   "İşlem başarıyla gerçekleşti. Sayfa yenileniyor lütfen bekleyiniz..."
+          // );
+          // setTimeout(function () {
+          //   window.location.reload();
+          // }, 1000);
         } else {
           setUtil.alert({
             container: "#modalOnayaGonder .modal-body #msg",
