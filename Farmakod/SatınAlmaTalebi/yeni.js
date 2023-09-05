@@ -29,9 +29,13 @@ $(function () {
           "</tr>" +
           "</tbody>" +
           "</table>" +
-          '<div class="row" style="display:flex;"><table id="tblIsEmri" style="display:none;width: 30%;width: 30%;margin-right:10px;"><thead><th>İş Emri</th></thead><tbody><tr><td><input id="selectIsEmri" class="form-control selects"></td></tr></tbody></table>' +
-          '<table id="tblMarkaModel" class="table table-bordered" style="display:none;width: 50%;"><thead style="background-color:white"><th>Ürün/Hizmet</th><th>Marka</th><th>Model</th><th></th></thead><tbody><tr><td><input id="selectStokKarti" class="form-control"></td><td><input id="txtMarka" class="form-control" type="text"></td><td><input id="txtModel" class="form-control" type="text"></td><td><button class="btn btn-sm btn-success newModel"><i class="fa fa-plus" ></i></td></tr></tbody></table>' +
+          '<div class="row isEmriTableDiv" style="display:flex;"><table id="tblIsEmri" style="display:none;width: 30%;width: 30%;margin-right:10px;"><thead><th>İş Emri</th></thead><tbody><tr><td><input id="selectIsEmri" class="form-control selects"></td></tr></tbody></table>' +
           "</div>" +
+          '<div class="row select-marka-model text-center" style="display:none;height:150px;">' +
+          '<button id="select-marka" type="button" class="btn btn-lg btn-primary" style="height:100%;width:25%" >Marka</button>' +
+          '<button id="select-model" type="button" class="btn btn-lg btn-info" style="height:100%;width:25%">Model</button></div>' +
+          '<div class="row create-marka-model" style="display:none;">' +
+          '<table id="tblMarkaModel" class="table table-bordered" style="width: 50%;"><thead style="background-color:white"><th style="display:none;">Ürün/Hizmet</th><th>Marka</th><th>Model</th><th></th></thead><tbody><tr><td style="display:none;" ><input id="selectStokKarti" class="form-control"></td><td><input data-id="" id="txtMarka" class="form-control" type="text"></td><td><input id="txtModel" class="form-control" type="text"></td><td style="text-align:center;"><button class="btn btn-sm btn-success new-model" style="display:none;"><i class="fa fa-plus" ></i><button class="btn btn-sm btn-success new-marka" style="display:none;"><i class="fa fa-plus" ></i><button class="btn btn-sm btn-primary back-model-marka"><i class="fa fa-undo" ></i></td></tr></tbody></table></div>' +
           "<hr>" +
           String.format(
             '<div class="divIsEmirleri" style="width:100%;"><div class="hizli-ekle-records" style="width: 100%;overflow-y: auto;height: 300px;"><h4 style="margin-top:0">İş Emirleri</h4></div><div class="selected-records" style="width: 100%;"><h4 style="margin-top:0">Oluşturulan Satın Alma Talebi</h4></div></div>'
@@ -40,7 +44,8 @@ $(function () {
             '<div class="divTalepUrunleri" style="width:100%"><div class="hizli-ekle-talep-urunleri" style="width: 100%;"><h3 style="margin-top:5px;font-size:17px;">Talep Ürünleri</h3></div><div class="selected-talep-urunleri" style="width: 100%;"><h4 style="margin-top:0">Eklenen Talep Ürünleri</h4></div></div>'
           ),
         footer:
-          '<button id="btn-ileri-satin-alma-talep" type="button" class="btn btn-sm btn-success " >İleri</button><button id="btnGeri" type="button" class="btn btn-sm btn-warning " style="display:none;" >Geri</button><button id="btn-create-talep-form" type="button" class="btn btn-sm btn-success " style="display:none;" >Kaydet</button>' +
+          '<button id="btn-ileri-satin-alma-talep" type="button" class="btn btn-sm btn-success " >İleri</button><button id="btnGeri" type="button" class="btn btn-sm btn-warning" style="display:none;" >Geri</button><button id="btn-create-talep-form" type="button" class="btn btn-sm btn-success" style="display:none;" >Kaydet</button>' +
+          '<button id="btn-back-talep-urun" style="display:none;" type="button" class="btn btn-sm btn-primary"><i class="fa fa-undo"></i></button>' +
           '<button id="btnKapat" class="btn btn-danger btn-sm" data-dismiss="modal" onclick="window.location.reload()">İptal Et</button>',
       },
     });
@@ -143,19 +148,6 @@ $(function () {
         .append($("<tbody/>"))
     );
     prepareSelect2WithData("#selectIsEmri", isEmirleriList);
-    prepareSelect2(
-      "#selectStokKarti",
-      "/Summary/LookupFieldValues",
-      {
-        coId: "550F4ECD8F244AD18FDC3C1665F3A6EF",
-        id: "460D00465F94400F8FF18F7FDEA4BC34",
-        viewFilterId: "3109EE3FF7C24B51A50C760243F056A1",
-      },
-      null,
-      false
-    );
-    $("#txtMarka").prop("disabled", true);
-    $("#txtModel").prop("disabled", true);
   });
   $("body").on("change", "#selectProjeAdimi", function (e) {
     if (String.isNullOrWhiteSpace($("#selectProjeAdimi").select2("data"))) {
@@ -181,15 +173,7 @@ $(function () {
       getİsEmirleri();
     }
   });
-  $("body").on("change", "#selectStokKarti", function (e) {
-    if (String.isNullOrWhiteSpace($(this).select2("data"))) {
-      $("#txtMarka").prop("disabled", true);
-      $("#txtModel").prop("disabled", true);
-    } else {
-      $("#txtMarka").prop("disabled", false);
-      $("#txtModel").prop("disabled", false);
-    }
-  });
+
   $("body").on("change", ".selectStokKarti", function (e) {
     var id = $(this).closest("tr").data("id");
     if (String.isNullOrWhiteSpace($(this).select2("data"))) {
@@ -253,40 +237,7 @@ $(function () {
       TalepHizmetOkuma($(this).select2("data"));
     }
   });
-  $("body").on("click", ".newModel", function () {
-    var valMarka = $("#txtMarka").val();
-    var valModel = $("#txtModel").val();
-    var stokKarti = $("#selectStokKarti").select2("data");
-    if (
-      String.isNullOrWhiteSpace(valMarka) ||
-      String.isNullOrWhiteSpace(valModel)
-    ) {
-      notify("warning", "Marka ve Model Alanı Boş Olamaz");
-      return;
-    } else if (
-      !String.isNullOrWhiteSpace(valModel) ||
-      !String.isNullOrWhiteSpace(valMarka)
-    ) {
-      var localUrl = String.format(
-        "https://localhost:44348/api/data/CreateMarkaModel"
-      );
-      var realUrl = String.format(
-        "https://farmakodwebapi.setcrm.com/api/data/CreateMarkaModel"
-      );
-      var model = {
-        Model: valModel,
-        Marka: valMarka,
-        StokKartiPublicId: stokKarti.id,
-      };
-      $.post(realUrl, model, function (r) {
-        if (r.Status) {
-          notify("success", "Marka ve Model Başarıyla Eklendi");
-        } else {
-          notify("danger", "Model Eklenemedi");
-        }
-      });
-    }
-  });
+
   $("body").on("click", "#selectAll", function () {
     if ($("#selectAll").is(":checked")) {
       $(".filtre-check").prop("checked", true);
@@ -438,11 +389,145 @@ $(function () {
     addedRow.find(".fields").val("");
     cloneRow.find(".fields").prop("disabled", true);
   });
+  $("body").on("click", ".m-row-talep-urun", function () {
+    var mRow = $(this).closest("tr");
+    var stokKarti = mRow.find(".selectStokKarti").select2("data");
+    var marka = mRow.find(".selectMarka").select2("data");
+    $("#btnGeri").hide();
+    $("#btn-create-talep-form").hide();
+    $("#btnKapat").hide();
+    $("#btn-back-talep-urun").show();
+    $(".divTalepUrunleri").hide();
+    $(".divIsEmirleri").hide();
+    $(".isEmriTableDiv").hide();
+    $(".select-marka-model").show();
+    prepareSelect2WithData("#selectStokKarti", [
+      {
+        id: stokKarti.id,
+        text: stokKarti.text,
+      },
+    ]);
+    $("#selectStokKarti").select2("data", {
+      id: stokKarti.id,
+      text: stokKarti.text,
+    });
+    if (!String.isNullOrWhiteSpace(marka)) {
+      $("#txtMarka").val(marka.text);
+      $("#txtMarka").data("id", marka.id);
+    }
+  });
+  $("body").on("click", "#btn-back-talep-urun", function () {
+    $("#btnGeri").show();
+    $("#btn-create-talep-form").show();
+    $("#btnKapat").show();
+    $("#btn-back-talep-urun").hide();
+    $(".divTalepUrunleri").show();
+    $(".isEmriTableDiv").show();
+    $(".select-marka-model").hide();
+  });
+
+  $("body").on("click", "#select-marka", function () {
+    $(".select-marka-model").hide();
+    $(".create-marka-model").show();
+    $(".new-marka").show();
+    $("#btn-back-talep-urun").hide();
+  });
+  $("body").on("click", "#select-model", function () {
+    $(".select-marka-model").hide();
+    $(".create-marka-model").show();
+    $(".new-model").show();
+    $("#txtMarka").prop("disabled", true);
+    $("#btn-back-talep-urun").hide();
+  });
+  $("body").on("click", ".back-model-marka", function () {
+    $("#txtModel").val("");
+    $(".select-marka-model").show();
+    $(".create-marka-model").hide();
+    $(".new-model").hide();
+    $(".new-marka").hide();
+    $("#txtMarka").prop("disabled", false);
+    $("#btn-back-talep-urun").show();
+  });
+  $("body").on("click", ".new-model", function () {
+    var valMarka = $("#txtMarka").val();
+    if (!String.isNullOrWhiteSpace(valMarka)) {
+      var markaId = $("#txtMarka").data("id");
+    }
+    var valModel = $("#txtModel").val();
+
+    var stokKarti = $("#selectStokKarti").select2("data");
+    if (
+      String.isNullOrWhiteSpace(valMarka) ||
+      String.isNullOrWhiteSpace(valModel)
+    ) {
+      notify("warning", "Marka ve Model Alanı Boş Olamaz");
+      return;
+    } else if (
+      !String.isNullOrWhiteSpace(valModel) ||
+      !String.isNullOrWhiteSpace(valMarka)
+    ) {
+      var localUrl = String.format(
+        "https://localhost:44348/api/data/CreateMarkaModel"
+      );
+      var realUrl = String.format(
+        "https://farmakodwebapi.setcrm.com/api/data/CreateMarkaModel"
+      );
+      var model = {
+        Model: valModel,
+        Marka: valMarka,
+        MarkaId: markaId,
+        StokKartiPublicId: stokKarti.id,
+        IsNewMarka: false,
+      };
+      $.post(realUrl, model, function (r) {
+        if (r.Status) {
+          notify("success", "Model Başarıyla Eklendi.");
+        } else {
+          notify("danger", "Model Eklenemedi!");
+        }
+      });
+    }
+  });
+
+  $("body").on("click", ".new-marka", function () {
+    $(".new-marka").show();
+    var valMarka = $("#txtMarka").val();
+
+    var valModel = $("#txtModel").val();
+    var stokKarti = $("#selectStokKarti").select2("data");
+    if (String.isNullOrWhiteSpace(valMarka)) {
+      notify("warning", "Marka Alanı Boş Olamaz");
+      return;
+    } else if (
+      !String.isNullOrWhiteSpace(valModel) ||
+      !String.isNullOrWhiteSpace(valMarka)
+    ) {
+      var localUrl = String.format(
+        "https://localhost:44348/api/data/CreateMarkaModel"
+      );
+      var realUrl = String.format(
+        "https://farmakodwebapi.setcrm.com/api/data/CreateMarkaModel"
+      );
+      var model = {
+        Model: valModel,
+        Marka: valMarka,
+        StokKartiPublicId: stokKarti.id,
+        IsNewMarka: true,
+      };
+      $.post(realUrl, model, function (r) {
+        if (r.Status) {
+          notify("success", r.Message);
+        } else {
+          notify("danger", r.Message);
+        }
+      });
+    }
+  });
+
   $("body").on("click", ".deleteTalep", function () {
     var deletedRow = $(this).closest("tr");
     deletedRow.remove();
   });
-
   $("body").on("click", ".isemri-sil", function () {
     var deletedRow = $(this).closest("tr");
     var isEmirleri = deletedRow.find(".isEmirleri tr");
@@ -764,7 +849,7 @@ $(function () {
             ).Value;
             tbody.append(
               String.format(
-                "<tr style='background-color:white' data-id='{0}' data-proje-adim='{6}'><td><input id='selectIsEmri_{0}' class='form-control selects selectIsEmri'></td><td><input id='selectStokKarti_{0}' class='form-control selects selectStokKarti'></td><td><input id='selectMarka_{0}' class='form-control selectMarka'></td><td><input id='selectModel_{0}' class='form-control selects selectModel'></td><td id='miktar' class='miktar' >{1}</td><td><input id='selectBirim_{0}' class='form-control selects selectBirim'></td><td id='teslimTarihi'>{2}</td><td id='aciklama'>{3}</td><td id='dosya' data-docId='{4}'><a target='_blank' href='/document/Viewer/{4}'>{5}</a><a target='_blank' href='/document/get/{4}'><i class='fas fa-download'></i></a></td><td><button class='btn btn-sm btn-success add-row-talep-urun'><i class='fa fa-plus' ></i></td></tr>",
+                "<tr style='background-color:white' data-id='{0}' data-proje-adim='{6}'><td><input id='selectIsEmri_{0}' class='form-control selects selectIsEmri'></td><td><input id='selectStokKarti_{0}' class='form-control selects selectStokKarti' style='display:none;'></td><td><input id='selectMarka_{0}' class='form-control selectMarka'></td><td><input id='selectModel_{0}' class='form-control selects selectModel'></td><td id='miktar' class='miktar' >{1}</td><td><input id='selectBirim_{0}' class='form-control selects selectBirim'></td><td id='teslimTarihi'>{2}</td><td id='aciklama'>{3}</td><td id='dosya' data-docId='{4}'><a target='_blank' href='/document/Viewer/{4}'>{5}</a><a target='_blank' href='/document/get/{4}'><i class='fas fa-download'></i></a></td><td><button class='btn btn-sm btn-primary m-row-talep-urun'>M<button class='btn btn-sm btn-success add-row-talep-urun'><i class='fa fa-plus' ></i></td></tr>",
                 v.PublicId,
                 miktar,
                 isEmri.talepEdilenTeslimTarihi,
@@ -794,6 +879,10 @@ $(function () {
               null,
               false
             );
+            $("#selectStokKarti_" + v.PublicId).select2("data", {
+              id: urunHizmetId,
+              text: urunHizmetText,
+            });
             prepareSelect2(
               "#selectMarka_" + v.PublicId,
               "/Summary/LookupFieldValues",
@@ -836,20 +925,7 @@ $(function () {
               false
             );
             $("#selectStokKarti_" + v.PublicId).select2("enable", false);
-            // $("#selectMarka_" + v.PublicId).select2("enable", false);
-            // $("#selectModel_" + v.PublicId).select2("enable", false);
-            $("#selectStokKarti_" + v.PublicId).select2("data", {
-              id: urunHizmetId,
-              text: urunHizmetText,
-            });
-            // $("#selectMarka_" + v.PublicId).select2("data", {
-            //   id: markaId,
-            //   text: markaText,
-            // });
-            // $("#selectModel_" + v.PublicId).select2("data", {
-            //   id: modelId,
-            //   text: modelText,
-            // });
+
             $("#selectBirim_" + v.PublicId).select2("data", {
               id: birimId,
               text: birimText,

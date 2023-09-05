@@ -37,19 +37,19 @@ $(function () {
     printWindow = window.open("");
 
     var style = `<style type="text/css" media="print">
-    
-    @page {
-    size: A4 landscape;
-    margin:10px;
-    max-height:99%; max-width:85%
-    }
-    @media print {
-    body {
-    zoom: 92%;
-    }
-    }
-    
-    </style>`;
+  
+  @page {
+  size: A4 landscape;
+  margin:10px;
+  max-height:99%; max-width:85%
+  }
+  @media print {
+  body {
+  zoom: 92%;
+  }
+  }
+  
+  </style>`;
     $(printWindow.document.body).append(style);
 
     for (let index = 0; index <= groupCount; index++) {

@@ -15,22 +15,97 @@ $(function () {
         body:
           '<div id="txt" style="margin:0 0 5px; width: 100%;">İşleminiz Yapılıyor, lütfen bekleyiniz..<br/> <img src="/Public/img/loading_bar.gif"></div>' +
           '<div id="msg" style="margin:0 0 5px; width: 100%;"></div>' +
+          '<div class="row" style="display:flex;"><table id="tblIsEmri" style="display:none;width: 30%;width: 30%;margin-right:10px;"><thead><th>İş Emri</th></thead><tbody><tr><td><input id="selectIsEmri" class="form-control selects"></td></tr></tbody></table>' +
+          '<table id="tblMarkaModel" class="table table-bordered" style="display:none;width: 50%;"><thead style="background-color:white"><th>Ürün/Hizmet</th><th>Marka</th><th>Model</th><th></th></thead><tbody><tr><td><input id="selectStokKarti" class="form-control"></td><td><input id="txtMarka" class="form-control" type="text"></td><td><input id="txtModel" class="form-control" type="text"></td><td><button class="btn btn-sm btn-success newModel"><i class="fa fa-plus" ></i></td></tr></tbody></table>' +
+          "</div>" +
+          "<hr>" +
+          String.format(
+            '<div class="divIsEmirleri" style="width:100%;"><div class="hizli-ekle-records" style="width: 100%;overflow-y: auto;height: 300px;"><h4 style="margin-top:0">İş Emirleri</h4></div><div class="selected-records" style="width: 100%;"><h4 style="margin-top:0">Oluşturulan Satın Alma Talebi</h4></div></div>'
+          ) +
+          String.format(
+            '<div class="divTalepUrunleri" style="width:100%"><div class="hizli-ekle-talep-urunleri" style="width: 100%;"><h3 style="margin-top:5px;font-size:17px;">Talep Ürünleri</h3></div><div class="selected-talep-urunleri" style="width: 100%;"><h4 style="margin-top:0">Eklenen Talep Ürünleri</h4></div></div>'
+          ) +
           '<div id="DivKiyasTabloHtml" style="width: 100%;">',
         footer:
+          '<button id="btn-ileri-satin-alma-talep" type="button" class="btn btn-sm btn-success " >İleri</button><button id="btnGeri" type="button" class="btn btn-sm btn-warning " style="display:none;" >Geri</button><button id="btn-create-talep-form" type="button" class="btn btn-sm btn-success " style="display:none;" >Kaydet</button>' +
           '<button class="btn btn-primary btn-sm btn-print" ><i class="fa fa-print" aria-hidden="true"></i> Yazdır</button>',
-        //"",
       },
       settings: {
         widthClass: "modal-full-width",
       },
     });
+    $(".divTalepUrunleri").hide();
+    var modalBody = $("#modalKiyasTablosu .modal-body"),
+      bodyRecords = modalBody.find(".hizli-ekle-records");
+    selectedRecords = modalBody.find(".selected-records");
+    talepUrunleri = modalBody.find(".hizli-ekle-talep-urunleri");
+    selectedTalepUrunleri = modalBody.find(".selected-talep-urunleri");
+    bodyRecords.append(
+      $("<table/>", {
+        class: "table table-bordered table-hover",
+        style: "background-color:#b1d3cc; ",
+      })
+        .append(
+          $("<thead style='background-color:#b1d3cc;' />").html(
+            '<tr><th><input id="selectAll" type="checkbox" class="form-check"></th><th style="text-align: center; vertical-align:middle;">İş Emri</th><th style="text-align: center; vertical-align:middle;">Teknik Şartname Açıklaması</th><th style="text-align: center; vertical-align:middle;">Proje Adım</th><th style="text-align: center; vertical-align:middle;">Proje Alt Adım</th></tr>'
+          )
+        )
+        .append($("<tbody/>"))
+    );
+
+    selectedRecords.append(
+      $("<table/>", {
+        class: "table table-bordered table-hover",
+        style: "height: 30px;",
+      })
+        .append(
+          $("<thead style='background-color:#b1d3cc;' />").html(
+            '<tr><th></th><th style="text-align: center; vertical-align:middle;">İş Emirleri</th><th style="text-align: center; vertical-align:middle;">Teknik Şartname Açıklaması</th><th style="text-align: center; vertical-align:middle;">Proje Adım</th><th style="text-align: center; vertical-align:middle;">Proje Alt Adım</th></tr>'
+          )
+        )
+        .append($("<tbody/>"))
+    );
+    $("#modalKiyasTablosu")
+      .find(".modal-header button:first")
+      .attr("onclick", "window.location.reload()");
+    $("#modalKiyasTablosu").modal({
+      backdrop: "static",
+      keyboard: false,
+    });
+
+    talepUrunleri.append(
+      $("<table/>", {
+        class: "table table-bordered table-hover",
+        style: "background-color:#b1d3cc; ",
+      })
+        .append(
+          $("<thead style='background-color:#b1d3cc;' />").html(
+            '<tr><th style="text-align: center; vertical-align:middle;">İş Emri</th><th style="text-align: center; vertical-align:middle;"><i class="fas fa-asterisk text-danger" ></i>Ürün/Hizmet</th><th style="text-align: center; vertical-align:middle;"><i class="fas fa-asterisk text-danger" ></i>Marka</th><th style="text-align: center; vertical-align:middle;"><i class="fas fa-asterisk text-danger" ></i>Model</th><th style="text-align: center; vertical-align:middle;width:10%;"><i class="fas fa-asterisk text-danger" ></i>Miktar</th><th style="text-align: center; vertical-align:middle;">Birim</th><th style="text-align: center; vertical-align:middle;width:18%;">Talep Edilen Teslim Tarihi</th><th style="text-align: center; vertical-align:middle;width:18%;">Açıklama</th><th style="text-align: center; vertical-align:middle;">Doküman</th><th></th></tr>'
+          )
+        )
+        .append($("<tbody/>"))
+    );
+
+    selectedTalepUrunleri.append(
+      $("<table/>", {
+        class: "table table-bordered table-hover",
+        style: "height: 30px;",
+      })
+        .append(
+          $("<thead style='background-color:#b1d3cc;' />").html(
+            '<tr><th style="text-align: center; vertical-align:middle;">Proje Adımı</th><th style="text-align: center; vertical-align:middle;">İş Emri</th><th style="text-align: center; vertical-align:middle;">Ürün/Hizmet</th><th style="text-align: center; vertical-align:middle;">Marka</th><th style="text-align: center; vertical-align:middle;">Model</th><th style="text-align: center; vertical-align:middle;">Miktar</th><th style="text-align: center; vertical-align:middle;">Birim</th><th style="text-align: center; vertical-align:middle;">Talep Edilen Teslim Tarihi</th><th style="text-align: center; vertical-align:middle;">Açıklama</th><th style="text-align: center; vertical-align:middle;">Doküman</th><th></th></tr>'
+          )
+        )
+        .append($("<tbody/>"))
+    );
+
     $(".modal-header").addClass("text-center");
     $("#modalKiyasTablosu").modal({
       backdrop: false,
     });
     $(".modalKiyasTablosu").css("padding", "0px!important");
     $("#txt").show();
-    createTables();
+    // createTables();
   });
 
   $("body").on("click", ".btn-print", function () {
@@ -645,5 +720,54 @@ $(function () {
       return "-";
     }
     return text;
+  }
+
+  function GetTedarikciler() {
+    var modal = $("#modalKiyasTablosu"),
+      modalBody = modal.find(".modal-body");
+    divAnalizler = modalBody.find(".hizli-ekle-records");
+    divMain = modalBody.find(".divIsEmirleri");
+    divAnalizler.find("#btn-add-selected").remove();
+    tbody = divAnalizler.find("tbody");
+    var url =
+      "https://farmakodwebapi.setcrm.com/api/data/LrOkuma?recordId=" +
+      $("#RecordPublicId").val() +
+      "&lrId=5DC26FD7E4CB41B0B840FF2DFBB7B509&q=";
+    var localUrl =
+      "http://localhost:44358/api/data/LrOkuma?recordId=" +
+      $("#RecordPublicId").val() +
+      "&lrId=5DC26FD7E4CB41B0B840FF2DFBB7B509&q=";
+    $.get(realUrl, function (r) {
+      if (r.Status === true) {
+        tbody.html("");
+        $("#btn-add-selected").remove();
+        if (r.Records.length > 0) {
+          $.each(r.Records, function (i, v) {
+            var tedarikci = v.Values.first(
+              "FieldPublicId",
+              "48603E185F12485889CB30609FE93BA3"
+            ).Value;
+            tbody.append(
+              String.format(
+                "<tr style='background-color:white' data-id='{0}' ><td style='text-align:center'><div class='tedarikci' >{1}</div></td><td><<td style='text-align:center;'><button class='btn btn-sm btn-success add-row-gmyOnayi' style='height:40px;' ><i class='fa fa-plus'></i></button><button class='btn btn-sm btn-danger delete-row-gmyOnayi' style='height:40px;display:none;' ><i class='fa fa-minus'></i></button></td></tr>",
+                v.PublicId,
+                tedarikci
+              )
+            );
+          });
+        }
+        divAnalizler.after(
+          '<button id="btn-add-selected" type="button" class="btn btn-sm btn-success pull-right ">Seçilenleri Ekle</button>'
+        );
+      } else {
+        tbody.html("");
+        setUtil.alert({
+          container: "#modalKiyasTablosu .modal-body #msg",
+          message: "Bu adıma bağlı iş emri bulunamadı",
+          alertClass: "alert-warning",
+          autoClose: true,
+        });
+      }
+    });
   }
 });
